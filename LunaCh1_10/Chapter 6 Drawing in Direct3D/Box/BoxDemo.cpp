@@ -212,7 +212,7 @@ void BoxApp::UpdateScene(float dt)
 
 void BoxApp::DrawScene()
 {
-	/*md3dImmediateContext->ClearRenderTargetView(mRenderTargetView, reinterpret_cast<const float*>(&Colors::LightSteelBlue));
+/*	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView, reinterpret_cast<const float*>(&Colors::LightSteelBlue));
 	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	md3dImmediateContext->IASetInputLayout(mInputLayout);
@@ -341,11 +341,7 @@ void BoxApp::BuildGeometryBuffers()
 	GeometryGenerator::MeshData cylinder;
 
 	GeometryGenerator geoGen;
-//	geoGen.CreateBox(1.0f, 1.0f, 1.0f, box);
-//	geoGen.CreateGrid(20.0f, 30.0f, 60, 40, grid);
 	geoGen.CreateSphere(0.5f, dynamicVertex, dynamicVertex, sphere);
-	//geoGen.CreateGeosphere(0.5f, 2, sphere);
-//	geoGen.CreateCylinder(0.5f, 0.3f, 3.0f, 20, 20, cylinder);
 
 	// Cache the vertex offsets to each object in the concatenated vertex buffer.
 	mBoxVertexOffset = 0;
@@ -387,27 +383,11 @@ void BoxApp::BuildGeometryBuffers()
 	XMFLOAT4 black(0.0f, 0.0f, 0.0f, 1.0f);
 
 	UINT k = 0;
-	for (size_t i = 0; i < box.Vertices.size(); ++i, ++k)
-	{
-		vertices[k].Pos = box.Vertices[i].Position;
-		vertices[k].Color = black;
-	}
 
-	for (size_t i = 0; i < grid.Vertices.size(); ++i, ++k)
-	{
-		vertices[k].Pos = grid.Vertices[i].Position;
-		vertices[k].Color = black;
-	}
 
 	for (size_t i = 0; i < sphere.Vertices.size(); ++i, ++k)
 	{
 		vertices[k].Pos = sphere.Vertices[i].Position;
-		vertices[k].Color = black;
-	}
-
-	for (size_t i = 0; i < cylinder.Vertices.size(); ++i, ++k)
-	{
-		vertices[k].Pos = cylinder.Vertices[i].Position;
 		vertices[k].Color = black;
 	}
 

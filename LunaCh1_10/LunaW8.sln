@@ -31,8 +31,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Chapter 01 XMVECTOR", "Chap
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Chapter 04 Init Direct3D", "Chapter 4 Direct3D Initialization\Init Direct3D\Init Direct3D.vcxproj", "{FB063B3D-D339-46EA-818F-BC952CF14850}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Chapter 23 MeshView", "..\..\..\School\Jaar 3\LunaCh11_25\Chapter 23 Meshes\MeshView\MeshView.vcxproj", "{22CA3EF9-F07A-4FB1-9B3A-0B2F2A727548}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Chapter 15 InstancingAndCulling", "Chapter 15 Instancing and Frustum Culling\InstancingAndCulling\InstancingAndCulling.vcxproj", "{313944E4-E50E-4F95-98B6-0FEFCD76DB54}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Chapter 19 Terrain", "Chapter 19 Terrain Rendering\Terrain\Terrain.vcxproj", "{648D7C4D-BF13-41DA-A68A-04267059B237}"
@@ -42,6 +40,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Chapter 13 BasicTessellation", "Chapter 13 The Tessellation Stages\BasicTessellation\BasicTessellation.vcxproj", "{116F1CF1-CBE8-435A-A07D-252D7D9F43BC}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Chapter 12 Blur", "Chapter 12 The Compute Shader\Blur\Blur.vcxproj", "{0247DE3D-48E2-40F0-8A6A-DDA7FC8C81B9}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Chapter 23 MeshView", "Chapter 23 Meshes\MeshView\MeshView.vcxproj", "{22CA3EF9-F07A-4FB1-9B3A-0B2F2A727548}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -179,15 +179,6 @@ Global
 		{FB063B3D-D339-46EA-818F-BC952CF14850}.Release|Win32.ActiveCfg = Release|Win32
 		{FB063B3D-D339-46EA-818F-BC952CF14850}.Release|Win32.Build.0 = Release|Win32
 		{FB063B3D-D339-46EA-818F-BC952CF14850}.Release|x64.ActiveCfg = Release|Win32
-		{22CA3EF9-F07A-4FB1-9B3A-0B2F2A727548}.Debug|Win32.ActiveCfg = Debug|Win32
-		{22CA3EF9-F07A-4FB1-9B3A-0B2F2A727548}.Debug|Win32.Build.0 = Debug|Win32
-		{22CA3EF9-F07A-4FB1-9B3A-0B2F2A727548}.Debug|x64.ActiveCfg = Debug|Win32
-		{22CA3EF9-F07A-4FB1-9B3A-0B2F2A727548}.Profile|Win32.ActiveCfg = Release|Win32
-		{22CA3EF9-F07A-4FB1-9B3A-0B2F2A727548}.Profile|Win32.Build.0 = Release|Win32
-		{22CA3EF9-F07A-4FB1-9B3A-0B2F2A727548}.Profile|x64.ActiveCfg = Release|Win32
-		{22CA3EF9-F07A-4FB1-9B3A-0B2F2A727548}.Release|Win32.ActiveCfg = Release|Win32
-		{22CA3EF9-F07A-4FB1-9B3A-0B2F2A727548}.Release|Win32.Build.0 = Release|Win32
-		{22CA3EF9-F07A-4FB1-9B3A-0B2F2A727548}.Release|x64.ActiveCfg = Release|Win32
 		{313944E4-E50E-4F95-98B6-0FEFCD76DB54}.Debug|Win32.ActiveCfg = Debug|Win32
 		{313944E4-E50E-4F95-98B6-0FEFCD76DB54}.Debug|Win32.Build.0 = Debug|Win32
 		{313944E4-E50E-4F95-98B6-0FEFCD76DB54}.Debug|x64.ActiveCfg = Debug|Win32
@@ -233,6 +224,15 @@ Global
 		{0247DE3D-48E2-40F0-8A6A-DDA7FC8C81B9}.Release|Win32.ActiveCfg = Release|Win32
 		{0247DE3D-48E2-40F0-8A6A-DDA7FC8C81B9}.Release|Win32.Build.0 = Release|Win32
 		{0247DE3D-48E2-40F0-8A6A-DDA7FC8C81B9}.Release|x64.ActiveCfg = Release|Win32
+		{22CA3EF9-F07A-4FB1-9B3A-0B2F2A727548}.Debug|Win32.ActiveCfg = Debug|Win32
+		{22CA3EF9-F07A-4FB1-9B3A-0B2F2A727548}.Debug|Win32.Build.0 = Debug|Win32
+		{22CA3EF9-F07A-4FB1-9B3A-0B2F2A727548}.Debug|x64.ActiveCfg = Debug|Win32
+		{22CA3EF9-F07A-4FB1-9B3A-0B2F2A727548}.Profile|Win32.ActiveCfg = Release|Win32
+		{22CA3EF9-F07A-4FB1-9B3A-0B2F2A727548}.Profile|Win32.Build.0 = Release|Win32
+		{22CA3EF9-F07A-4FB1-9B3A-0B2F2A727548}.Profile|x64.ActiveCfg = Release|Win32
+		{22CA3EF9-F07A-4FB1-9B3A-0B2F2A727548}.Release|Win32.ActiveCfg = Release|Win32
+		{22CA3EF9-F07A-4FB1-9B3A-0B2F2A727548}.Release|Win32.Build.0 = Release|Win32
+		{22CA3EF9-F07A-4FB1-9B3A-0B2F2A727548}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

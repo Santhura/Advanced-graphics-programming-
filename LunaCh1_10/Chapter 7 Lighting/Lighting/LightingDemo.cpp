@@ -128,7 +128,7 @@ LightingApp::LightingApp(HINSTANCE hInstance)
 	XMStoreFloat4x4(&mWavesWorld, wavesOffset);
 
 	// Directional light.
-	mDirLight.Ambient  = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	mDirLight.Ambient  = XMFLOAT4(.2f, .2f, .2f, 1.0f);
 	mDirLight.Diffuse  = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	mDirLight.Specular = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	mDirLight.Direction = XMFLOAT3(0.57735f, -0.57735f, 0.57735f);

@@ -34,6 +34,7 @@ public:
 
 private:
 	void BuildGeometryBuffers();
+	void BuildPhoneGeometryBuffers();
 
 private:
 	ID3D11Buffer* mBoxVB;
@@ -43,6 +44,7 @@ private:
 
 	ID3D11ShaderResourceView* mDiffuseMapSRV;
 	ID3D11ShaderResourceView* mPhoneDiffuseMApSRV; // edit
+	ID3D11ShaderResourceView* mScreenDiffuseMapSRV; //edit
 
 	DirectionalLight mDirLights[3];
 	Material mBoxMat;
@@ -152,6 +154,9 @@ bool CrateApp::Init()
 
 	HR(D3DX11CreateShaderResourceViewFromFile(md3dDevice,
 		L"Textures/mobile.png", 0, 0, &mPhoneDiffuseMApSRV, 0));
+
+	HR(D3DX11CreateShaderResourceViewFromFile(md3dDevice,
+		L"Textures/Box.png", 0, 0, &mScreenDiffuseMapSRV, 0));
  
 	BuildGeometryBuffers();
 
@@ -354,9 +359,13 @@ void CrateApp::BuildGeometryBuffers()
 
 		p.z = -2.0f;
 
+		XMFLOAT2 t = phoneCase.Vertices[i].TexC;
+		
+
+
 		vertices2[l].Pos	= p;
 		vertices2[l].Normal = phoneCase.Vertices[i].Normal;
-		vertices2[l].Tex	= phoneCase.Vertices[i].TexC;
+		vertices2[l].Tex	= t;
 	}
 
     D3D11_BUFFER_DESC vbd;
@@ -417,4 +426,18 @@ void CrateApp::BuildGeometryBuffers()
 	iinitData2.pSysMem = &indices2[0];
 	HR(md3dDevice->CreateBuffer(&ibd2, &iinitData2, &mPhoneCaseIB));
 }
- 
+
+void CrateApp::BuildPhoneGeometryBuffers()
+{
+	Vertex::Basic32 v[30];
+
+	v[0] = Vertex::Basic32(+3.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 4.0f);
+	v[1] = Vertex::Basic32(-3.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	v[2] = Vertex::Basic32(7.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 4.0f, 0.0f);
+
+	v[3] = Vertex::Basic32(-3.5f, 0.0f, -10.0f, 0.0f, 1.0f, 0.0f, 0.0f, 4.0f);
+	v[4] = Vertex::Basic32(7.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 4.0f, 0.0f);
+	v[5] = Vertex::Basic32(7.5f, 0.0f, -10.0f, 0.0f, 1.0f, 0.0f, 4.0f, 4.0f);
+
+
+} 
