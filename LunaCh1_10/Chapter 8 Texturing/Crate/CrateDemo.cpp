@@ -63,6 +63,7 @@ private:
 	UINT mPhoneCaseIndexOffset; // edit
 	UINT mBoxIndexCount;
 	UINT mPhoneCaseIndexCount; // edit
+	ID3D11RasterizerState* mWireframeRS;	//edit: object wireframe
 
 	XMFLOAT3 mEyePosW;
 
@@ -159,7 +160,14 @@ bool CrateApp::Init()
 		L"Textures/Box.png", 0, 0, &mScreenDiffuseMapSRV, 0));
  
 	BuildGeometryBuffers();
+	BuildPhoneGeometryBuffers();
+	D3D11_RASTERIZER_DESC wfd;										// wireframe description
+	ZeroMemory(&wfd, sizeof(D3D11_RASTERIZER_DESC));				// will initialized all the structures in our description, will be set to 0 or false
+	wfd.FillMode = D3D11_FILL_WIREFRAME;							// will render in a wireframe mode
+	wfd.CullMode = D3D11_CULL_NONE;									// 
+	wfd.DepthClipEnable = true;										// set to default value
 
+	md3dDevice->CreateRasterizerState(&wfd, &mWireframeRS);
 	return true;
 }
 
@@ -203,6 +211,9 @@ void CrateApp::DrawScene()
 	XMMATRIX view  = XMLoadFloat4x4(&mView);
 	XMMATRIX proj  = XMLoadFloat4x4(&mProj);
 	XMMATRIX viewProj = view*proj;
+
+	//md3dImmediateContext->RSSetState(mWireframeRS); // edit
+
 
 	// Set per frame constants.
 	Effects::BasicFX->SetDirLights(mDirLights);
@@ -251,6 +262,8 @@ void CrateApp::DrawScene()
 
 		activeTech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
 		md3dImmediateContext->DrawIndexed(mPhoneCaseIndexCount, mPhoneCaseIndexOffset, mPhoneCaseVertexOffset);
+
+		md3dImmediateContext->Draw(12, 0);
     }
 
 	HR(mSwapChain->Present(0, 0));
@@ -429,15 +442,38 @@ void CrateApp::BuildGeometryBuffers()
 
 void CrateApp::BuildPhoneGeometryBuffers()
 {
-	Vertex::Basic32 v[30];
+	Vertex::Basic32 v[12];
+	// phone
+	// back
+	v[0] = Vertex::Basic32(+1.0f, -2.0f, -2.0f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
+	v[1] = Vertex::Basic32(+1.0f, 2.0f, -2.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 
-	v[0] = Vertex::Basic32(+3.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 4.0f);
-	v[1] = Vertex::Basic32(-3.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-	v[2] = Vertex::Basic32(7.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 4.0f, 0.0f);
+	v[2] = Vertex::Basic32(-1.0f, 2.0f, -2.0f, -1.0f, 0.0f, 0.0f, .69f, 0.0f);
+	v[3] = Vertex::Basic32(-1.0f, -2.0f, -2.0f, -1.0f, 0.0f, 0.0f, 0.69f, 1.0f);
 
-	v[3] = Vertex::Basic32(-3.5f, 0.0f, -10.0f, 0.0f, 1.0f, 0.0f, 0.0f, 4.0f);
-	v[4] = Vertex::Basic32(7.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 4.0f, 0.0f);
-	v[5] = Vertex::Basic32(7.5f, 0.0f, -10.0f, 0.0f, 1.0f, 0.0f, 4.0f, 4.0f);
+	//front
+	v[4] = Vertex::Basic32(+1.0f, 2.0f, -2.0f, -1.0f, 0.0f, 0.0f, .33f, 0.0f);
+	v[5] = Vertex::Basic32(+1.0f, -2.0f, -2.0f, -1.0f, 0.0f, 0.0f, 0.33f, 1.0f);
 
+	v[6] = Vertex::Basic32(-1.0f, -2.0f, -2.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+	v[7] = Vertex::Basic32(-1.0f, 2.0f, -2.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	
+	// screen
+	v[8] = Vertex::Basic32(-.95f, -1.65f, -2.0001f, 0.0f, 0.0f, -1.0f, .35f, 1.0f);
+	v[9] = Vertex::Basic32(-.95f, 1.5f, -2.0001f, 0.0f, 0.0f, -1.0f, .35f, 0.0f);
 
+	v[10] = Vertex::Basic32(+.95f, 1.5f, -2.0001f, 0.0f, 0.0f, -1.0f, 0.66f, 0.0f);
+	v[11] = Vertex::Basic32(+.95f, -1.65f, -2.0001f, 0.0f, 0.0f, -1.0f, 0.66f, 1.0f);
+
+	
+
+	D3D11_BUFFER_DESC vbd;
+	vbd.Usage = D3D11_USAGE_IMMUTABLE;
+	vbd.ByteWidth = sizeof(Vertex::Basic32) * 12;
+	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vbd.CPUAccessFlags = 0;
+	vbd.MiscFlags = 0;
+	D3D11_SUBRESOURCE_DATA vinitData;
+	vinitData.pSysMem = v;
+	HR(md3dDevice->CreateBuffer(&vbd, &vinitData, &mPhoneCaseVB));
 } 

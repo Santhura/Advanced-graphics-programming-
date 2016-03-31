@@ -40,7 +40,6 @@ private:
 	void BuildGeometryBuffers();
 	void BuildFX();
 	void BuildVertexLayout();
-	void BuildTriangle2Buffers();
 
 private:
 	ID3D11Buffer* mBoxVB;
@@ -185,7 +184,6 @@ void BlendDemo::DrawScene()
 		// 36 indices for the box.
 		md3dImmediateContext->DrawIndexed(6, 0, 0);
 		md3dImmediateContext->DrawIndexed(6, 3, 3);
-
 	}
 
 	HR(mSwapChain->Present(0, 0));
