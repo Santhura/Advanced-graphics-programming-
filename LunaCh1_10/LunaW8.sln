@@ -37,13 +37,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Chapter 23 MeshView", "Chap
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Chapter 11 TreeBillboard", "Chapter 11 The Geometry Shader\TreeBillboard\TreeBillboard.vcxproj", "{85017BE9-A2CE-4895-A70E-81B2CE21E253}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Chapter 09 BlendDemo", "Opdrachten\BlendDemo\BlendDemo.vcxproj", "{D2ED27AE-3961-4BB3-80F1-C997831181B7}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Chapter 09 BlendDemo", "ASSIGNMENTS\BlendDemo\BlendDemo.vcxproj", "{D2ED27AE-3961-4BB3-80F1-C997831181B7}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Chapter 06 Box", "Opdrachten\Box\Box.vcxproj", "{E76DB861-9CF7-4CF2-A077-78AA9E5F5303}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Chapter 06 Box", "ASSIGNMENTS\Box\Box.vcxproj", "{E76DB861-9CF7-4CF2-A077-78AA9E5F5303}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Chapter 08 Crate", "Opdrachten\Crate\Crate.vcxproj", "{D450380B-CD03-456C-B874-4639827A617C}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Chapter 08 Crate", "ASSIGNMENTS\Crate\Crate.vcxproj", "{D450380B-CD03-456C-B874-4639827A617C}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Chapter 07 Lighting", "Opdrachten\Lighting\Lighting.vcxproj", "{94683E2F-0DBB-4D07-8549-A0BC062DDE14}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Chapter 07 Lighting", "ASSIGNMENTS\Lighting\Lighting.vcxproj", "{94683E2F-0DBB-4D07-8549-A0BC062DDE14}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
