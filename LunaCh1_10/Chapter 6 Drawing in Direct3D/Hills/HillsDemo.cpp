@@ -20,11 +20,11 @@ struct Vertex
 	std::vector<Vertex> Vertices;
 };
 
-class BlendDemo : public D3DApp
+class ShaderDemo : public D3DApp
 {
 public:
-	BlendDemo(HINSTANCE hInstance);
-	~BlendDemo();
+	ShaderDemo(HINSTANCE hInstance);
+	~ShaderDemo();
 
 	bool Init();
 	void OnResize();
@@ -72,7 +72,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-	BlendDemo theApp(hInstance);
+	ShaderDemo theApp(hInstance);
 
 	if (!theApp.Init())
 		return 0;
@@ -81,12 +81,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 }
 
 
-BlendDemo::BlendDemo(HINSTANCE hInstance)
+ShaderDemo::ShaderDemo(HINSTANCE hInstance)
 	: D3DApp(hInstance), mBoxVB(0), mBoxIB(0), mFX(0), mTech(0),
 	mfxWorldViewProj(0), mInputLayout(0),
 	mTheta(1.5f*MathHelper::Pi), mPhi(0.25f*MathHelper::Pi), mRadius(5.0f)
 {
-	mMainWndCaption = L"Blend Demo";
+	mMainWndCaption = L"Shader Demo";
 
 	mLastMousePos.x = 0;
 	mLastMousePos.y = 0;
@@ -97,7 +97,7 @@ BlendDemo::BlendDemo(HINSTANCE hInstance)
 	XMStoreFloat4x4(&mProj, I);
 }
 
-BlendDemo::~BlendDemo()
+ShaderDemo::~ShaderDemo()
 {
 	ReleaseCOM(mBoxVB);
 	ReleaseCOM(mBoxIB);
@@ -105,7 +105,7 @@ BlendDemo::~BlendDemo()
 	ReleaseCOM(mInputLayout);
 }
 
-bool BlendDemo::Init()
+bool ShaderDemo::Init()
 {
 	if (!D3DApp::Init())
 		return false;
@@ -117,7 +117,7 @@ bool BlendDemo::Init()
 	return true;
 }
 
-void BlendDemo::OnResize()
+void ShaderDemo::OnResize()
 {
 	D3DApp::OnResize();
 
@@ -126,7 +126,7 @@ void BlendDemo::OnResize()
 	XMStoreFloat4x4(&mProj, P);
 }
 
-void BlendDemo::UpdateScene(float dt)
+void ShaderDemo::UpdateScene(float dt)
 {
 	// Convert Spherical to Cartesian coordinates.
 	float x = mRadius*sinf(mPhi)*cosf(mTheta);
@@ -140,12 +140,19 @@ void BlendDemo::UpdateScene(float dt)
 
 	XMMATRIX V = XMMatrixLookAtLH(pos, target, up);
 	XMStoreFloat4x4(&mView, V);
+
+
 }
 
-void BlendDemo::DrawScene()
+void ShaderDemo::DrawScene()
 {
 	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView, reinterpret_cast<const float*>(&Colors::LightSteelBlue));
 	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	
+	ID3D11VertexShader *vertexShader = nullptr;
+	ID3D11PixelShader *pixelShader = nullptr;
+	md3dImmediateContext->VSSetShader(vertexShader,nullptr,0);
+	md3dImmediateContext->PSSetShader(pixelShader, nullptr, 0);
 
 	md3dImmediateContext->IASetInputLayout(mInputLayout);
 	md3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -154,6 +161,8 @@ void BlendDemo::DrawScene()
 	UINT offset = 0;
 	md3dImmediateContext->IASetVertexBuffers(0, 1, &mBoxVB, &stride, &offset);
 	md3dImmediateContext->IASetIndexBuffer(mBoxIB, DXGI_FORMAT_R32_UINT, 0);
+
+	
 
 	// Set constants
 	XMMATRIX world = XMLoadFloat4x4(&mWorld);
@@ -170,14 +179,14 @@ void BlendDemo::DrawScene()
 
 		mTech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
 
-		// 36 indices for the box.
+
 		md3dImmediateContext->DrawIndexed(6, 0, 0);
 	}
 
 	HR(mSwapChain->Present(0, 0));
 }
 
-void BlendDemo::OnMouseDown(WPARAM btnState, int x, int y)
+void ShaderDemo::OnMouseDown(WPARAM btnState, int x, int y)
 {
 	mLastMousePos.x = x;
 	mLastMousePos.y = y;
@@ -185,12 +194,12 @@ void BlendDemo::OnMouseDown(WPARAM btnState, int x, int y)
 	SetCapture(mhMainWnd);
 }
 
-void BlendDemo::OnMouseUp(WPARAM btnState, int x, int y)
+void ShaderDemo::OnMouseUp(WPARAM btnState, int x, int y)
 {
 	ReleaseCapture();
 }
 
-void BlendDemo::OnMouseMove(WPARAM btnState, int x, int y)
+void ShaderDemo::OnMouseMove(WPARAM btnState, int x, int y)
 {
 	if ((btnState & MK_LBUTTON) != 0)
 	{
@@ -222,18 +231,18 @@ void BlendDemo::OnMouseMove(WPARAM btnState, int x, int y)
 	mLastMousePos.y = y;
 }
 
-void BlendDemo::BuildGeometryBuffers()
+void ShaderDemo::BuildGeometryBuffers()
 {
 	// Create vertex buffer
-	Vertex triangle1[] =
+	Vertex quad[] =
 	{
-		{ XMFLOAT3(-3.0f, -3.0f, 0.0f), (const float*)&Colors::White },
-		{ XMFLOAT3(-3.0f, +3.0f, 0.0f), (const float*)&Colors::White },
-		{ XMFLOAT3(+3.0f, +3.0f, 0.0f), (const float*)&Colors::White },
+		{ XMFLOAT3(-3.0f, -3.0f, 0.0f), (const float*)&Colors::Black },
+		{ XMFLOAT3(-3.0f, +3.0f, 0.0f), (const float*)&Colors::Black },
+		{ XMFLOAT3(+3.0f, +3.0f, 0.0f), (const float*)&Colors::Black },
 
-		{ XMFLOAT3(+3.0f, +3.0f, 0.0f), (const float*)&Colors::White },
-		{ XMFLOAT3(+3.0f, -3.0f, 0.0f), (const float*)&Colors::White },
-		{ XMFLOAT3(-3.0f, -3.0f, 0.0f), (const float*)&Colors::White }
+		{ XMFLOAT3(+3.0f, +3.0f, 0.0f), (const float*)&Colors::Black },
+		{ XMFLOAT3(+3.0f, -3.0f, 0.0f), (const float*)&Colors::Black },
+		{ XMFLOAT3(-3.0f, -3.0f, 0.0f), (const float*)&Colors::Black }
 	};
 
 	D3D11_BUFFER_DESC vbd;
@@ -244,7 +253,7 @@ void BlendDemo::BuildGeometryBuffers()
 	vbd.MiscFlags = 0;
 	vbd.StructureByteStride = 0;
 	D3D11_SUBRESOURCE_DATA vinitData;
-	vinitData.pSysMem = triangle1;
+	vinitData.pSysMem = quad;
 	HR(md3dDevice->CreateBuffer(&vbd, &vinitData, &mBoxVB));
 
 
@@ -268,7 +277,7 @@ void BlendDemo::BuildGeometryBuffers()
 }
 
 
-void BlendDemo::BuildFX()
+void ShaderDemo::BuildFX()
 {
 	DWORD shaderFlags = 0;
 #if defined( DEBUG ) || defined( _DEBUG )
@@ -304,7 +313,7 @@ void BlendDemo::BuildFX()
 	mfxWorldViewProj = mFX->GetVariableByName("gWorldViewProj")->AsMatrix();
 }
 
-void BlendDemo::BuildVertexLayout()
+void ShaderDemo::BuildVertexLayout()
 {
 	// Create the vertex input layout.
 	D3D11_INPUT_ELEMENT_DESC vertexDesc[] =

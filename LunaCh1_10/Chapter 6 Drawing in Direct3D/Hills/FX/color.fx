@@ -39,15 +39,6 @@ float4 PS(VertexOut pin) : SV_Target
     return pin.Color;
 }
 
-technique11 ColorTech
-{
-    pass P0
-    {
-        SetVertexShader( CompileShader( vs_5_0, VS() ) );
-		SetGeometryShader( NULL );
-        SetPixelShader( CompileShader( ps_5_0, PS() ) );
-    }
-}
 
 float noise(float3 p) //Thx to Las^Mercury
 {
@@ -97,6 +88,8 @@ float4 raymarch(float3 org, float3 dir)
 	return float4(p, glow);
 }
 
+float2 _ScreenParams;
+
 float4 mainImage(out float4 fragColor, in float2 fragCoord : VS_POSITION)
 {
 	float2 v = -1.0 + 2.0 * fragCoord.xy / _ScreenParams.xy;
@@ -110,8 +103,17 @@ float4 mainImage(out float4 fragColor, in float2 fragCoord : VS_POSITION)
 
 	float4 col = lerp(float4(1., .5, .1, 1.), float4(0.1, .5, 1., 1.), p.y*.02 + .4);
 
-	fragColor = lerp(float4(0.), col, pow(glow*2., 4.));
+	fragColor = lerp(float4(0.,.5,.1,1.), col, pow(glow*2., 4.));
 	//fragColor = lerp(float4(1.), lerp(float4(1.,.5,.1,1.),float4(0.1,.5,1.,1.),p.y*.02+.4), pow(glow*2.,4.));
 
 }
 
+technique11 ColorTech
+{
+	pass P0
+	{
+		SetVertexShader(CompileShader(vs_5_0, VS()));
+		SetGeometryShader(NULL);
+		SetPixelShader(CompileShader(ps_5_0, PS()));
+	}
+}
