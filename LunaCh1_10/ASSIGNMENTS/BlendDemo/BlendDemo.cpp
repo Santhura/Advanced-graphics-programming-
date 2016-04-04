@@ -13,7 +13,7 @@
 #include "d3dx11Effect.h"
 #include "MathHelper.h"
 #include "RenderStates.h"
-
+#include "Effects.h"
 struct Vertex
 {
 	XMFLOAT3 Pos;
@@ -124,11 +124,13 @@ bool BlendDemo::Init()
 	if (!D3DApp::Init())
 		return false;
 
+	RenderStates::InitAll(md3dDevice);
+	Effects::InitAll(md3dDevice);
 	BuildGeometryBuffers();
 	BuildGeometryBuffers2();
 	BuildFX();
 	BuildVertexLayout();
-	RenderStates::InitAll(md3dDevice);
+	
 
 	return true;
 }
@@ -170,7 +172,7 @@ void BlendDemo::DrawScene()
 	UINT offset = 0;
 	
 
-	float blendFactor[] = { 0.0f, .0f, .0f, .0f };
+	float blendFactor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	// Set constants
 	XMMATRIX world = XMLoadFloat4x4(&mWorld);
 	XMMATRIX view = XMLoadFloat4x4(&mView);
@@ -210,6 +212,7 @@ void BlendDemo::DrawScene()
 
 		md3dImmediateContext->IASetVertexBuffers(0, 1, &mBoxVB3, &stride, &offset);
 		md3dImmediateContext->IASetIndexBuffer(mBoxIB3, DXGI_FORMAT_R32_UINT, 0);
+		
 		ID3DX11EffectPass* pass = mTech3->GetPassByIndex(p);
 
 		mTech3->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
@@ -349,13 +352,13 @@ void BlendDemo::BuildGeometryBuffers()
 	Vertex triangle2[] =
 	{
 
-		{ XMFLOAT3(-2.0f, -1.0f, .5f), (const float*)&Colors::Yellow },
-		{ XMFLOAT3(-2.0f, +1.0f, .5f), (const float*)&Colors::Yellow },
-		{ XMFLOAT3(-1.0f, +1.0f, .5f), (const float*)&Colors::Yellow },
+		{ XMFLOAT3(-2.0f, -1.0f, .5f), (const float*)&Colors::RedHalf },
+		{ XMFLOAT3(-2.0f, +1.0f, .5f), (const float*)&Colors::RedHalf },
+		{ XMFLOAT3(-1.0f, +1.0f, .5f), (const float*)&Colors::RedHalf },
 
-		{ XMFLOAT3(-2.0f, -1.0f,-1.5f), (const float*)&Colors::Green },
-		{ XMFLOAT3(-2.0f, +1.0f,-1.5f), (const float*)&Colors::Green },
-		{ XMFLOAT3(-1.0f, +1.0f,-1.5f), (const float*)&Colors::Green }
+		{ XMFLOAT3(-2.0f, -1.0f,-1.5f), (const float*)&Colors::BlueHalf },
+		{ XMFLOAT3(-2.0f, +1.0f, -1.5f), (const float*)&Colors::BlueHalf },
+		{ XMFLOAT3(-1.0f, +1.0f, -1.5f), (const float*)&Colors::BlueHalf }
 	};
 
 	D3D11_BUFFER_DESC vbd2;
@@ -395,9 +398,9 @@ void BlendDemo::BuildGeometryBuffers()
 	Vertex triangle3[] =
 	{
 
-		{ XMFLOAT3(1.0f, -1.0f, 3.0f), (const float*)&Colors::Green },
-		{ XMFLOAT3(1.0f, +1.0f, 3.0f), (const float*)&Colors::Green },
-		{ XMFLOAT3(+2.0f, +1.0f, 3.0f), (const float*)&Colors::Green },
+		{ XMFLOAT3(1.0f, -1.0f, 3.0f), (const float*)&Colors::RedHalf },
+		{ XMFLOAT3(1.0f, +1.0f, 3.0f), (const float*)&Colors::RedHalf },
+		{ XMFLOAT3(+2.0f, +1.0f, 3.0f), (const float*)&Colors::RedHalf },
 
 		{ XMFLOAT3(1.0f, -1.0f, 2.0f), (const float*)&Colors::BlueHalf },
 		{ XMFLOAT3(1.0f, +1.0f, 2.0f), (const float*)&Colors::BlueHalf },

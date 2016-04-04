@@ -47,7 +47,7 @@ private:
 	ID3DX11Effect* mFX;
 	ID3DX11EffectTechnique* mTech;
 	ID3DX11EffectMatrixVariable* mfxWorldViewProj;
-
+	ID3DX11EffectScalarVariable * mTimeScalar;
 	ID3D11InputLayout* mInputLayout;
 
 	UINT mTriangle1;
@@ -60,6 +60,8 @@ private:
 	float mTheta;
 	float mPhi;
 	float mRadius;
+
+	ID3DX11EffectMatrixVariable *mTime;
 
 	POINT mLastMousePos;
 };
@@ -82,7 +84,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 
 
 ShaderDemo::ShaderDemo(HINSTANCE hInstance)
-	: D3DApp(hInstance), mBoxVB(0), mBoxIB(0), mFX(0), mTech(0),
+	: D3DApp(hInstance), mBoxVB(0), mBoxIB(0), mFX(0), mTech(0), mTime(0), mTimeScalar(0),
 	mfxWorldViewProj(0), mInputLayout(0),
 	mTheta(1.5f*MathHelper::Pi), mPhi(0.25f*MathHelper::Pi), mRadius(5.0f)
 {
@@ -140,8 +142,6 @@ void ShaderDemo::UpdateScene(float dt)
 
 	XMMATRIX V = XMMatrixLookAtLH(pos, target, up);
 	XMStoreFloat4x4(&mView, V);
-
-
 }
 
 void ShaderDemo::DrawScene()
@@ -162,7 +162,7 @@ void ShaderDemo::DrawScene()
 	md3dImmediateContext->IASetVertexBuffers(0, 1, &mBoxVB, &stride, &offset);
 	md3dImmediateContext->IASetIndexBuffer(mBoxIB, DXGI_FORMAT_R32_UINT, 0);
 
-	
+	mTimeScalar->SetFloat(mTimer.TotalTime()); // set time
 
 	// Set constants
 	XMMATRIX world = XMLoadFloat4x4(&mWorld);
@@ -171,6 +171,7 @@ void ShaderDemo::DrawScene()
 	XMMATRIX worldViewProj = world*view*proj;
 
 	mfxWorldViewProj->SetMatrix(reinterpret_cast<float*>(&worldViewProj));
+
 
 	D3DX11_TECHNIQUE_DESC techDesc;
 	mTech->GetDesc(&techDesc);
@@ -236,13 +237,13 @@ void ShaderDemo::BuildGeometryBuffers()
 	// Create vertex buffer
 	Vertex quad[] =
 	{
-		{ XMFLOAT3(-3.0f, -3.0f, 0.0f), (const float*)&Colors::Black },
-		{ XMFLOAT3(-3.0f, +3.0f, 0.0f), (const float*)&Colors::Black },
-		{ XMFLOAT3(+3.0f, +3.0f, 0.0f), (const float*)&Colors::Black },
-
 		{ XMFLOAT3(+3.0f, +3.0f, 0.0f), (const float*)&Colors::Black },
 		{ XMFLOAT3(+3.0f, -3.0f, 0.0f), (const float*)&Colors::Black },
-		{ XMFLOAT3(-3.0f, -3.0f, 0.0f), (const float*)&Colors::Black }
+		{ XMFLOAT3(-3.0f, -3.0f, 0.0f), (const float*)&Colors::Black },
+
+		{ XMFLOAT3(-3.0f, -3.0f, 0.0f), (const float*)&Colors::Black },
+		{ XMFLOAT3(-3.0f, +3.0f, 0.0f), (const float*)&Colors::Black },
+		{ XMFLOAT3(+3.0f, +3.0f, 0.0f), (const float*)&Colors::Black }
 	};
 
 	D3D11_BUFFER_DESC vbd;
@@ -309,8 +310,10 @@ void ShaderDemo::BuildFX()
 	// Done with compiled shader.
 	ReleaseCOM(compiledShader);
 
+	// link variables to shader
 	mTech = mFX->GetTechniqueByName("ColorTech");
 	mfxWorldViewProj = mFX->GetVariableByName("gWorldViewProj")->AsMatrix();
+	mTimeScalar = mFX->GetVariableByName("sTime")->AsScalar();
 }
 
 void ShaderDemo::BuildVertexLayout()

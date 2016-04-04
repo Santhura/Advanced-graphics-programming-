@@ -374,8 +374,6 @@ void CrateApp::BuildGeometryBuffers()
 
 		XMFLOAT2 t = phoneCase.Vertices[i].TexC;
 		
-
-
 		vertices2[l].Pos	= p;
 		vertices2[l].Normal = phoneCase.Vertices[i].Normal;
 		vertices2[l].Tex	= t;
