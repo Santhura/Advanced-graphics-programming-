@@ -56,6 +56,8 @@ public:
 	///</summary>
 	void CreateSphere(float radius, UINT sliceCount, UINT stackCount, MeshData& meshData);
 
+	void CreateMPrism(float radius, UINT sliceCount, UINT stackCount, MeshData& meshData);
+
 	///<summary>
 	/// Creates a geosphere centered at the origin with the given radius.  The
 	/// depth controls the level of tessellation.

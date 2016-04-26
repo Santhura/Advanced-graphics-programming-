@@ -197,7 +197,20 @@ void GeometryGenerator::CreateSphere(float radius, UINT sliceCount, UINT stackCo
 		meshData.Indices.push_back(baseIndex+i+1);
 	}
 }
- 
+
+void GeometryGenerator::CreateMPrism(float radius, UINT sliceCount, UINT stackCount, MeshData& meshData)
+{
+	meshData.Vertices.clear();
+	meshData.Indices.clear();
+
+	Vertex topVertex(0.0f, +radius, 0.0f, 0.0f, +1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	Vertex bottomVertex(0.0f, -radius, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+
+	meshData.Vertices.push_back(topVertex);
+
+
+}
+
 void GeometryGenerator::Subdivide(MeshData& meshData)
 {
 	// Save a copy of the input geometry.

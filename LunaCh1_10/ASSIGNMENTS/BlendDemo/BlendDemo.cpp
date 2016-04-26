@@ -834,8 +834,8 @@ void BoxApp::DrawScene()
 	{
 		ID3DX11EffectPass* pass = mTech->GetPassByIndex(p);
 
-		md3dImmediateContext->IASetVertexBuffers(0, 1, &mBoxIB, &stride, &offset);
-		md3dImmediateContext->IASetIndexBuffer(mBoxVB, DXGI_FORMAT_R32_UINT, 0);
+		md3dImmediateContext->IASetVertexBuffers(0, 1, &mBoxVB, &stride, &offset);
+		md3dImmediateContext->IASetIndexBuffer(mBoxIB, DXGI_FORMAT_R32_UINT, 0);
 
 		XMVECTOR mirrorPlane = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f); // xy plane
 		XMMATRIX R = XMMatrixReflect(mirrorPlane);
