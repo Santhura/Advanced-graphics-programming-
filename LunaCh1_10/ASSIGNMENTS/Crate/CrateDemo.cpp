@@ -263,7 +263,7 @@ void CrateApp::DrawScene()
 		activeTech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
 		md3dImmediateContext->DrawIndexed(mPhoneCaseIndexCount, mPhoneCaseIndexOffset, mPhoneCaseVertexOffset);
 
-		md3dImmediateContext->Draw(12, 0);
+	//	md3dImmediateContext->Draw(28, 0);
     }
 
 	HR(mSwapChain->Present(0, 0));
@@ -440,34 +440,64 @@ void CrateApp::BuildGeometryBuffers()
 
 void CrateApp::BuildPhoneGeometryBuffers()
 {
-	Vertex::Basic32 v[12];
+	int const totalVertex = 28;
+	Vertex::Basic32 v[totalVertex];
 	// phone
 	// back
-	v[0] = Vertex::Basic32(+1.0f, -2.0f, -2.0f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
-	v[1] = Vertex::Basic32(+1.0f, 2.0f, -2.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+	v[0] = Vertex::Basic32(+1.0f, -2.0f, -1.8f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
+	v[1] = Vertex::Basic32(+1.0f, 2.0f, -1.8f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 
-	v[2] = Vertex::Basic32(-1.0f, 2.0f, -2.0f, -1.0f, 0.0f, 0.0f, .69f, 0.0f);
-	v[3] = Vertex::Basic32(-1.0f, -2.0f, -2.0f, -1.0f, 0.0f, 0.0f, 0.69f, 1.0f);
+
+	v[2] = Vertex::Basic32(-1.0f, 2.0f, -1.8f, -1.0f, 0.0f, 0.0f, .69f, 0.0f);
+	v[3] = Vertex::Basic32(-1.0f, -2.0f, -1.8f, -1.0f, 0.0f, 0.0f, 0.69f, 1.0f);
+
+	//left side
+	v[4] = Vertex::Basic32(-1.0f, 2.0f, -1.8f, -1.0f, 0.0f, 0.0f, 0.69f, 1.0f);
+	v[5] = Vertex::Basic32(-1.0f, 2.0f, -2.0f, -1.0f, 0.0f, 0.0f, 0.69f, 1.0f);
+
+	v[6] = Vertex::Basic32(-1.0f, -2.0f, -2.0f, -1.0f, 0.0f, 0.0f, 0.69f, 1.0f);
+	v[7] = Vertex::Basic32(-1.0f, -2.0f, -1.8f, -1.0f, 0.0f, 0.0f, 0.69f, 1.0f);
+
+	//up side
+	v[8] = Vertex::Basic32(1.0f, 2.0f, -1.8f, -1.0f, 0.0f, 0.0f, 0.69f, 1.0f);
+	v[9] = Vertex::Basic32(1.0f, 2.0f, -2.0f, -1.0f, 0.0f, 0.0f, 0.69f, 1.0f);
+
+	v[10] = Vertex::Basic32(-1.0f, 2.0f, -2.0f, -1.0f, 0.0f, 0.0f, 0.69f, 1.0f);
+	v[11] = Vertex::Basic32(-1.0f, 2.0f, -1.8f, -1.0f, 0.0f, 0.0f, 0.69f, 1.0f);
+
+	//right side
+	v[12] = Vertex::Basic32(1.0f, -2.0f, -1.8f, -1.0f, 0.0f, 0.0f, 0.69f, 1.0f);
+	v[13] = Vertex::Basic32(1.0f, -2.0f, -2.0f, -1.0f, 0.0f, 0.0f, 0.69f, 1.0f);
+
+	v[14] = Vertex::Basic32(1.0f, 2.0f, -2.0f, -1.0f, 0.0f, 0.0f, 0.69f, 1.0f);
+	v[15] = Vertex::Basic32(1.0f, 2.0f, -1.8f, -1.0f, 0.0f, 0.0f, 0.69f, 1.0f);
+
+	//down side
+	v[16] = Vertex::Basic32(-1.0f, -2.0f, -1.8f, -1.0f, 0.0f, 0.0f, 0.69f, 1.0f);
+	v[17] = Vertex::Basic32(-1.0f, -2.0f, -2.0f, -1.0f, 0.0f, 0.0f, 0.69f, 1.0f);
+
+	v[18] = Vertex::Basic32(1.0f, -2.0f, -2.0f, -1.0f, 0.0f, 0.0f, 0.69f, 1.0f);
+	v[19] = Vertex::Basic32(1.0f, -2.0f, -1.8f, -1.0f, 0.0f, 0.0f, 0.69f, 1.0f);
 
 	//front
-	v[4] = Vertex::Basic32(+1.0f, 2.0f, -2.0f, -1.0f, 0.0f, 0.0f, .33f, 0.0f);
-	v[5] = Vertex::Basic32(+1.0f, -2.0f, -2.0f, -1.0f, 0.0f, 0.0f, 0.33f, 1.0f);
+	v[20] = Vertex::Basic32(+1.0f, 2.0f, -2.0f, -1.0f, 0.0f, 0.0f, .33f, 0.0f);
+	v[21] = Vertex::Basic32(+1.0f, -2.0f, -2.0f, -1.0f, 0.0f, 0.0f, 0.33f, 1.0f);
 
-	v[6] = Vertex::Basic32(-1.0f, -2.0f, -2.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
-	v[7] = Vertex::Basic32(-1.0f, 2.0f, -2.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	v[22] = Vertex::Basic32(-1.0f, -2.0f, -2.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+	v[23] = Vertex::Basic32(-1.0f, 2.0f, -2.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 	
 	// screen
-	v[8] = Vertex::Basic32(-.95f, -1.65f, -2.0001f, 0.0f, 0.0f, -1.0f, .35f, 1.0f);
-	v[9] = Vertex::Basic32(-.95f, 1.5f, -2.0001f, 0.0f, 0.0f, -1.0f, .35f, 0.0f);
+	v[24] = Vertex::Basic32(-.95f, -1.65f, -2.0001f, 0.0f, 0.0f, -1.0f, .35f, 1.0f);
+	v[25] = Vertex::Basic32(-.95f, 1.5f, -2.0001f, 0.0f, 0.0f, -1.0f, .35f, 0.0f);
 
-	v[10] = Vertex::Basic32(+.95f, 1.5f, -2.0001f, 0.0f, 0.0f, -1.0f, 0.66f, 0.0f);
-	v[11] = Vertex::Basic32(+.95f, -1.65f, -2.0001f, 0.0f, 0.0f, -1.0f, 0.66f, 1.0f);
+	v[26] = Vertex::Basic32(+.95f, 1.5f, -2.0001f, 0.0f, 0.0f, -1.0f, 0.66f, 0.0f);
+	v[27] = Vertex::Basic32(+.95f, -1.65f, -2.0001f, 0.0f, 0.0f, -1.0f, 0.66f, 1.0f);
 
 	
 
 	D3D11_BUFFER_DESC vbd;
 	vbd.Usage = D3D11_USAGE_IMMUTABLE;
-	vbd.ByteWidth = sizeof(Vertex::Basic32) * 12;
+	vbd.ByteWidth = sizeof(Vertex::Basic32) * totalVertex;
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vbd.CPUAccessFlags = 0;
 	vbd.MiscFlags = 0;

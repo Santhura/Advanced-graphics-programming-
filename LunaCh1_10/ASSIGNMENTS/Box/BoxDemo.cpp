@@ -69,18 +69,27 @@ private:
 	int mBoxVertexOffset;
 	int mGridVertexOffset;
 	int mSphereVertexOffset;
+	int mNPrismVertexOffset;
+
+	int sliceCount = 10;
+	int cylinderHeight = 1;
+	int cylinderRadius = 1;
+
 	int mCylinderVertexOffset;
 
 	UINT mBoxIndexOffset;
 	UINT mGridIndexOffset;
 	UINT mSphereIndexOffset;
+	UINT mNPrismIndexOffset;
 	UINT mCylinderIndexOffset;
 
 	UINT mBoxIndexCount;
 	UINT mGridIndexCount;
 	UINT mSphereIndexCount;
+	UINT mNPrismIndexCount;
 	UINT mCylinderIndexCount;
 
+	UINT indexCount;
 
 	XMMATRIX centerSphereOffset;
 	XMMATRIX centerSphereScale;
@@ -207,11 +216,47 @@ void BoxApp::UpdateScene(float dt)
 
 	if (dynamicVertex <= 5)
 		dynamicVertex = 5;
+	
 
 }
-
+float timer = 0;
 void BoxApp::DrawScene()
 {
+	
+	timer--;
+
+	if (timer <= 0){
+		if (GetAsyncKeyState('Q') && sliceCount > 3) {
+			sliceCount--;
+			timer = 200;
+			BuildGeometryBuffers();
+		}
+		else if (GetAsyncKeyState('E') && sliceCount < 500) {
+			sliceCount++;
+			timer = 200;
+			BuildGeometryBuffers();
+		}
+		else if (GetAsyncKeyState('W') && cylinderHeight < 2) {
+			cylinderHeight += 0.2f;
+			timer = 200;
+			BuildGeometryBuffers();
+		}
+		else if (GetAsyncKeyState('S') && cylinderHeight > 0.4f) {
+			cylinderHeight -= 0.2f;
+			timer = 200;
+			BuildGeometryBuffers();
+		}
+		else if (GetAsyncKeyState('A') && cylinderRadius > 0.4f) {
+			cylinderRadius -= 0.2f;
+			timer = 200;
+			BuildGeometryBuffers();
+		}
+		else if (GetAsyncKeyState('D') && cylinderRadius < 2) {
+			cylinderRadius += 0.2f;
+			timer = 200;
+			BuildGeometryBuffers();
+		}
+	}
 /*	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView, reinterpret_cast<const float*>(&Colors::LightSteelBlue));
 	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
@@ -255,7 +300,7 @@ void BoxApp::DrawScene()
 	md3dImmediateContext->IASetInputLayout(mInputLayout);
 	md3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	md3dImmediateContext->RSSetState(mWireframeRS);
+	//md3dImmediateContext->RSSetState(mWireframeRS);
 
 	UINT stride = sizeof(Vertex);
 	UINT offset = 0;
@@ -264,13 +309,18 @@ void BoxApp::DrawScene()
 
 	// Set constants
 
+	// Set constants
+	XMMATRIX world = XMLoadFloat4x4(&mWorld);
 	XMMATRIX view = XMLoadFloat4x4(&mView);
 	XMMATRIX proj = XMLoadFloat4x4(&mProj);
-	XMMATRIX viewProj = view*proj;
+	XMMATRIX worldViewProj = world*view*proj;
+
+	mfxWorldViewProj->SetMatrix(reinterpret_cast<float*>(&worldViewProj));
+
 
 	D3DX11_TECHNIQUE_DESC techDesc;
 	mTech->GetDesc(&techDesc);
-	for (UINT p = 0; p < techDesc.Passes; ++p)
+	/*for (UINT p = 0; p < techDesc.Passes; ++p)
 	{
 		// Draw the grid.
 		XMMATRIX world = XMLoadFloat4x4(&mGridWorld);
@@ -280,8 +330,15 @@ void BoxApp::DrawScene()
 		mfxWorldViewProj->SetMatrix(reinterpret_cast<float*>(&(world*viewProj)));
 		mTech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
 		md3dImmediateContext->DrawIndexed(mSphereIndexCount, mSphereIndexOffset, mSphereVertexOffset);
-	}
+	}*/
 
+	for (UINT p = 0; p < techDesc.Passes; ++p)
+	{
+
+		// Draw center sphere.
+		mTech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
+		md3dImmediateContext->DrawIndexed(indexCount, 0, 0);
+	}
 	HR(mSwapChain->Present(0, 0));
 }
 
@@ -329,26 +386,107 @@ void BoxApp::OnMouseMove(WPARAM btnState, int x, int y)
 	mLastMousePos.x = x;
 	mLastMousePos.y = y;
 }
+void GenerateCylinderCap(GeometryGenerator::MeshData &meshData, int sliceCount, float radius, float yPos)
+{
+	float theta = 2.0f*XM_PI / sliceCount;
+	for (size_t i = 0; i < sliceCount + 1; i++)
+	{
+		GeometryGenerator::Vertex vertex;
+		if (i == 0) {
+			vertex.Position = XMFLOAT3(0.0f, yPos, 0.0f);
+		}
+		else {
+			vertex.Position = XMFLOAT3(radius * cosf(i*theta), yPos, radius * sinf(i*theta));
+		}
+		meshData.Vertices.push_back(vertex);
+	}
 
+	int lastVertex = (meshData.Vertices.size() - sliceCount);
+	for (size_t i = 0; i < sliceCount; i++)
+	{
+		meshData.Indices.push_back(lastVertex);
+		meshData.Indices.push_back((meshData.Vertices.size() - sliceCount) - 1);
+		if (i == sliceCount - 1) {
+			meshData.Indices.push_back((meshData.Vertices.size() - sliceCount));
+		}
+		else {
+			meshData.Indices.push_back(lastVertex + 1);
+		}
+		lastVertex++;
+	}
+}
+void GenerateCylinder(GeometryGenerator::MeshData &meshData, int sliceCount, float radius, float height, float yPos)
+{
+	GenerateCylinderCap(meshData, sliceCount, radius, yPos);
+	GenerateCylinderCap(meshData, sliceCount, radius, height);
+	int lastVertex = 1;
+	for (size_t i = 0; i < sliceCount; i++)
+	{
+		meshData.Indices.push_back(lastVertex);
+		meshData.Indices.push_back(lastVertex + sliceCount + 1);
+		if (i == sliceCount - 1) {
+			meshData.Indices.push_back(1);
+		}
+		else {
+			meshData.Indices.push_back(lastVertex + 1);
+		}
+		lastVertex++;
+	}
+	lastVertex = sliceCount + 2;
+	for (size_t i = 0; i < sliceCount; i++)
+	{
+		meshData.Indices.push_back(lastVertex);
+		if (i == sliceCount - 1) {
+			meshData.Indices.push_back(sliceCount + 2);
+		}
+		else {
+			meshData.Indices.push_back(lastVertex + 1);
+		}
+		if (i == sliceCount - 1) {
+			meshData.Indices.push_back(lastVertex - (sliceCount * 2));
+		}
+		else {
+			meshData.Indices.push_back(lastVertex - sliceCount);
+		}
+		lastVertex++;
+	}
+}
 void BoxApp::BuildGeometryBuffers()
 {
-	GeometryGenerator::MeshData sphere;
+	GeometryGenerator::MeshData myMesh;
+	GenerateCylinder(myMesh, sliceCount, cylinderRadius, cylinderHeight, 0);
 
+	
+	std::vector<Vertex> vertices(myMesh.Vertices.size());
+
+	UINT k = 0;
+	for (size_t i = 0; i < myMesh.Vertices.size(); ++i, ++k)
+	{
+		vertices[k].Pos = myMesh.Vertices[i].Position;
+		vertices[k].Color = XMFLOAT4((i / (float)myMesh.Vertices.size()), (i / (float)myMesh.Vertices.size()), (i / (float)myMesh.Vertices.size()), 1.0f);
+	}
+
+
+	/*GeometryGenerator::MeshData sphere;
+	GeometryGenerator::MeshData nPrism;
 	GeometryGenerator geoGen;
 	geoGen.CreateSphere(0.5f, dynamicVertex, dynamicVertex, sphere);
+	geoGen.CreateMPrism(0.5f, dynamicVertex, dynamicVertex, nPrism);
 
 	// Cache the vertex offsets to each object in the concatenated vertex buffer.
 	mSphereVertexOffset = 0;
-
+	mNPrismVertexOffset = 0;
 	// Cache the index count of each object.
 	mSphereIndexCount = sphere.Indices.size();
+	mNPrismIndexCount = nPrism.Indices.size();
 
 	// Cache the starting index for each object in the concatenated index buffer.
 	mSphereIndexOffset = 0;
+	mNPrismIndexOffset = 0;
 
-	UINT totalVertexCount = sphere.Vertices.size();
+	UINT totalVertexCount = sphere.Vertices.size() + nPrism.Vertices.size();
 
-	UINT totalIndexCount = mSphereIndexCount;
+	UINT totalIndexCount = mSphereIndexCount + mNPrismIndexCount;
 
 	//
 	// Extract the vertex elements we are interested in and pack the
@@ -365,10 +503,10 @@ void BoxApp::BuildGeometryBuffers()
 		vertices[k].Pos = sphere.Vertices[i].Position;
 		vertices[k].Color = black;
 	}
-
+	*/
 	D3D11_BUFFER_DESC vbd;
 	vbd.Usage = D3D11_USAGE_IMMUTABLE;
-	vbd.ByteWidth = sizeof(Vertex) * totalVertexCount;
+	vbd.ByteWidth = sizeof(Vertex) * myMesh.Vertices.size();
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vbd.CPUAccessFlags = 0;
 	vbd.MiscFlags = 0;
@@ -381,11 +519,12 @@ void BoxApp::BuildGeometryBuffers()
 	//
 
 	std::vector<UINT> indices;
-	indices.insert(indices.end(), sphere.Indices.begin(), sphere.Indices.end());
+	indices.insert(indices.end(), myMesh.Indices.begin(), myMesh.Indices.end());
+	indexCount = myMesh.Indices.size();
 
 	D3D11_BUFFER_DESC ibd;
 	ibd.Usage = D3D11_USAGE_IMMUTABLE;
-	ibd.ByteWidth = sizeof(UINT) * totalIndexCount;
+	ibd.ByteWidth = sizeof(UINT) * indexCount;
 	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	ibd.CPUAccessFlags = 0;
 	ibd.MiscFlags = 0;
@@ -529,6 +668,9 @@ void BoxApp::BuildGeometryBuffers()
 	iinitData.pSysMem = indices;
 	HR(md3dDevice->CreateBuffer(&ibd, &iinitData, &mBoxIB));*/
 }
+
+
+
 
 void BoxApp::BuildFX()
 {

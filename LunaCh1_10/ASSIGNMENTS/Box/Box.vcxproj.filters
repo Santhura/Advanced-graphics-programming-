@@ -39,6 +39,12 @@
     <ClCompile Include="..\..\Common\MathHelper.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="RenderStates.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Effects.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Common\d3dApp.h">
@@ -58,6 +64,12 @@
     </ClInclude>
     <ClInclude Include="..\..\Common\MathHelper.h">
       <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderStates.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
