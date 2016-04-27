@@ -41,6 +41,9 @@ private:
 	ID3D11Buffer* mPhoneCaseVB; //edit
 	ID3D11Buffer* mBoxIB;
 	ID3D11Buffer* mPhoneCaseIB; // edit
+	ID3D11Buffer* mPhoneScreenIB; // edit
+	ID3D11Buffer* mPhoneScreenVB; // edit
+
 
 	ID3D11ShaderResourceView* mDiffuseMapSRV;
 	ID3D11ShaderResourceView* mPhoneDiffuseMApSRV; // edit
@@ -63,6 +66,11 @@ private:
 	UINT mPhoneCaseIndexOffset; // edit
 	UINT mBoxIndexCount;
 	UINT mPhoneCaseIndexCount; // edit
+
+	int mphoneScreenVertexOffset;
+	UINT mPhoneScreenIndexOffset;
+	UINT mPhoneScreenIndexCount;
+
 	ID3D11RasterizerState* mWireframeRS;	//edit: object wireframe
 
 	XMFLOAT3 mEyePosW;
@@ -92,7 +100,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
  
 
 CrateApp::CrateApp(HINSTANCE hInstance)
-: D3DApp(hInstance), mBoxVB(0), mBoxIB(0), mPhoneCaseIB(0), mPhoneCaseVB(0) ,mDiffuseMapSRV(0), mEyePosW(0.0f, 0.0f, 0.0f), 
+: D3DApp(hInstance), mBoxVB(0), mBoxIB(0), mPhoneCaseIB(0), mPhoneCaseVB(0), mPhoneScreenIB(0), mPhoneScreenVB(0), mDiffuseMapSRV(0), mEyePosW(0.0f, 0.0f, 0.0f), 
   mTheta(1.3f*MathHelper::Pi), mPhi(0.4f*MathHelper::Pi), mRadius(2.5f)
 {
 	mMainWndCaption = L"Crate Demo";
@@ -263,6 +271,26 @@ void CrateApp::DrawScene()
 		activeTech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
 		md3dImmediateContext->DrawIndexed(mPhoneCaseIndexCount, mPhoneCaseIndexOffset, mPhoneCaseVertexOffset);
 
+
+
+		md3dImmediateContext->IASetVertexBuffers(0, 1, &mPhoneScreenVB, &stride, &offset);
+		md3dImmediateContext->IASetIndexBuffer(mPhoneScreenIB, DXGI_FORMAT_R32_UINT, 0);
+
+		// draw the phone
+		world = XMLoadFloat4x4(&mPhoneCaseWorld);
+		worldInvTranspose = MathHelper::InverseTranspose(world);
+		worldViewProj = world * view*proj;
+
+		Effects::BasicFX->SetWorld(world);
+		Effects::BasicFX->SetWorldInvTranspose(worldInvTranspose);
+		Effects::BasicFX->SetWorldViewProj(worldViewProj);
+		Effects::BasicFX->SetTexTransform(XMLoadFloat4x4(&mTexTransform));
+		Effects::BasicFX->SetMaterial(mPhoneCaseMat);
+		Effects::BasicFX->SetDiffuseMap(mPhoneDiffuseMApSRV);
+
+		activeTech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
+		md3dImmediateContext->DrawIndexed(mPhoneScreenIndexCount, mPhoneScreenIndexOffset, mphoneScreenVertexOffset);
+
 	//	md3dImmediateContext->Draw(28, 0);
     }
 
@@ -318,34 +346,19 @@ void CrateApp::BuildGeometryBuffers()
 {
 	GeometryGenerator::MeshData box;
 	GeometryGenerator::MeshData phoneCase; //edit
+	GeometryGenerator::MeshData phoneScreen; // edit
 
 	GeometryGenerator geoGen;
 	geoGen.CreateBox(1.0f, 1.0f, 1.0f, box);
 
-	geoGen.CreateBox(2.0f, 4.0f, 0.2f, phoneCase); // edit
-
 	// Cache the vertex offsets to each object in the concatenated vertex buffer.
 	mBoxVertexOffset      = 0;
-
-	mPhoneCaseVertexOffset = 0; // edit
-
 	// Cache the index count of each object.
 	mBoxIndexCount      = box.Indices.size();
-
-	mPhoneCaseIndexCount = phoneCase.Indices.size(); // edit
-
 	// Cache the starting index for each object in the concatenated index buffer.
 	mBoxIndexOffset      = 0;
-
-	mPhoneCaseIndexOffset = 0; //edit
-	
 	UINT totalVertexCount = box.Vertices.size();
-
-	UINT totalPhoneVertexCount = phoneCase.Vertices.size(); // edit
-
 	UINT totalIndexCount = mBoxIndexCount;
-
-	UINT totalPhoneIndexCount = mPhoneCaseIndexCount; // edit
 
 	//
 	// Extract the vertex elements we are interested in and pack the
@@ -353,8 +366,6 @@ void CrateApp::BuildGeometryBuffers()
 	//
 
 	std::vector<Vertex::Basic32> vertices(totalVertexCount);
-	std::vector<Vertex::Basic32> vertices2(totalPhoneVertexCount);
-
 
 	UINT k = 0;
 	for(size_t i = 0; i < box.Vertices.size(); ++i, ++k)
@@ -362,21 +373,6 @@ void CrateApp::BuildGeometryBuffers()
 		vertices[k].Pos    = box.Vertices[i].Position;
 		vertices[k].Normal = box.Vertices[i].Normal;
 		vertices[k].Tex    = box.Vertices[i].TexC;
-	}
-
-	UINT l = 0;
-	for (size_t i = 0; i < phoneCase.Vertices.size(); ++i, ++l)
-	{
-		//edit: change position of the phone
-		XMFLOAT3 p = phoneCase.Vertices[i].Position;
-
-		p.z = -2.0f;
-
-		XMFLOAT2 t = phoneCase.Vertices[i].TexC;
-		
-		vertices2[l].Pos	= p;
-		vertices2[l].Normal = phoneCase.Vertices[i].Normal;
-		vertices2[l].Tex	= t;
 	}
 
     D3D11_BUFFER_DESC vbd;
@@ -409,6 +405,29 @@ void CrateApp::BuildGeometryBuffers()
 
 
 	// edit
+	geoGen.CreateBox(2.0f, 4.0f, 0.2f, phoneCase); // edit
+	mPhoneCaseVertexOffset = 0; // edit
+	mPhoneCaseIndexCount = phoneCase.Indices.size(); // edit
+	mPhoneCaseIndexOffset = 0; //edit
+	UINT totalPhoneVertexCount = phoneCase.Vertices.size(); // edit
+	UINT totalPhoneIndexCount = mPhoneCaseIndexCount; // edit
+
+	std::vector<Vertex::Basic32> vertices2(totalPhoneVertexCount);
+
+	UINT l = 0;
+	for (size_t i = 0; i < phoneCase.Vertices.size(); ++i, ++l)
+	{
+		//edit: change position of the phone
+		XMFLOAT3 p = phoneCase.Vertices[i].Position;
+
+		p.z = -2.0f;
+
+		XMFLOAT2 t = phoneCase.Vertices[i].TexC;
+
+		vertices2[l].Pos = p;
+		vertices2[l].Normal = phoneCase.Vertices[i].Normal;
+		vertices2[l].Tex = t;
+	}
 
 	D3D11_BUFFER_DESC vbd2;
 	vbd2.Usage = D3D11_USAGE_IMMUTABLE;
@@ -436,6 +455,64 @@ void CrateApp::BuildGeometryBuffers()
 	D3D11_SUBRESOURCE_DATA iinitData2;
 	iinitData2.pSysMem = &indices2[0];
 	HR(md3dDevice->CreateBuffer(&ibd2, &iinitData2, &mPhoneCaseIB));
+
+	// edit
+
+	geoGen.CreateBox(1.9f, 3.2f, 0.1f, phoneScreen);
+	mphoneScreenVertexOffset = 0;
+	mPhoneScreenIndexCount = phoneScreen.Indices.size();
+	mPhoneScreenIndexOffset = 0;
+	UINT totalPhoneScreenVertexCount = phoneScreen.Vertices.size();
+	UINT totalPhoneScreenIndexCount = mPhoneScreenIndexCount;
+
+	std::vector<Vertex::Basic32> vertices3(totalPhoneScreenVertexCount);
+	UINT j = 0;
+
+	for (size_t i = 0; i < phoneScreen.Vertices.size(); ++i, ++j)
+	{
+		//edit: change position of the phone
+		XMFLOAT3 p = phoneScreen.Vertices[i].Position;
+
+		p.z = -2.0001f;
+
+		XMFLOAT2 t = phoneScreen.Vertices[i].TexC;
+		if (i == 0 || i == 1)
+			t.x = 0.35f;
+		else if (i == 2 || i == 3)
+			t.x = 0.66f;
+		//t.y = 1;
+
+		vertices3[j].Pos = p;
+		vertices3[j].Normal = phoneScreen.Vertices[i].Normal;
+		vertices3[j].Tex = t;
+	}
+
+	D3D11_BUFFER_DESC vbd3;
+	vbd3.Usage = D3D11_USAGE_IMMUTABLE;
+	vbd3.ByteWidth = sizeof(Vertex::Basic32) * totalPhoneScreenVertexCount;
+	vbd3.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vbd3.CPUAccessFlags = 0;
+	vbd3.MiscFlags = 0;
+	D3D11_SUBRESOURCE_DATA vinitData3;
+	vinitData3.pSysMem = &vertices3[0];
+	HR(md3dDevice->CreateBuffer(&vbd3, &vinitData3, &mPhoneScreenVB));
+
+	//
+	// Pack the indices of all the meshes into one index buffer.
+	//
+
+	std::vector<UINT> indices3;
+	indices3.insert(indices3.end(), phoneScreen.Indices.begin(), phoneScreen.Indices.end());
+
+	D3D11_BUFFER_DESC ibd3;
+	ibd3.Usage = D3D11_USAGE_IMMUTABLE;
+	ibd3.ByteWidth = sizeof(UINT) * totalPhoneScreenIndexCount;
+	ibd3.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ibd3.CPUAccessFlags = 0;
+	ibd3.MiscFlags = 0;
+	D3D11_SUBRESOURCE_DATA iinitData3;
+	iinitData3.pSysMem = &indices2[0];
+	HR(md3dDevice->CreateBuffer(&ibd3, &iinitData3, &mPhoneScreenIB));
 }
 
 void CrateApp::BuildPhoneGeometryBuffers()
