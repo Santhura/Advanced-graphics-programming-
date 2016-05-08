@@ -72,7 +72,7 @@ public:
 	/// 
 	/// Does not work with compressed formats.
 	///</summary>
-	static ID3D11ShaderResourceView* CreateTexture2DArraySRV(
+	static ID3D11ShaderResourceView* Createtex2DArraySRV(
 		ID3D11Device* device, ID3D11DeviceContext* context,
 		std::vector<std::wstring>& filenames,
 		DXGI_FORMAT format = DXGI_FORMAT_FROM_FILE,

@@ -16,9 +16,9 @@ float MathHelper::AngleFromXY(float x, float y)
 	// Quadrant I or IV
 	if(x >= 0.0f) 
 	{
-		// If x = 0, then atanf(y/x) = +pi/2 if y > 0
-		//                atanf(y/x) = -pi/2 if y < 0
-		theta = atanf(y / x); // in [-pi/2, +pi/2]
+		// If x = 0, then atan2f(y/x) = +pi/2 if y > 0
+		//                atan2f(y/x) = -pi/2 if y < 0
+		theta = atan2f(y / x,0); // in [-pi/2, +pi/2]
 
 		if(theta < 0.0f)
 			theta += 2.0f*Pi; // in [0, 2*pi).
@@ -26,12 +26,12 @@ float MathHelper::AngleFromXY(float x, float y)
 
 	// Quadrant II or III
 	else      
-		theta = atanf(y/x) + Pi; // in [0, 2*pi).
+		theta = atan2f(y/x,0) + Pi; // in [0, 2*pi).
 
 	return theta;
 }
 
-XMVECTOR MathHelper::RandUnitVec3()
+XMVECTOR MathHelper::RandUnitfloat3()
 {
 	XMVECTOR One  = XMVectorSet(1.0f, 1.0f, 1.0f, 1.0f);
 	XMVECTOR Zero = XMVectorZero();
@@ -53,7 +53,7 @@ XMVECTOR MathHelper::RandUnitVec3()
 	}
 }
 
-XMVECTOR MathHelper::RandHemisphereUnitVec3(XMVECTOR n)
+XMVECTOR MathHelper::RandHemisphereUnitfloat3(XMVECTOR n)
 {
 	XMVECTOR One  = XMVectorSet(1.0f, 1.0f, 1.0f, 1.0f);
 	XMVECTOR Zero = XMVectorZero();

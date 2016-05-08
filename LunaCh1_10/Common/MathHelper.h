@@ -64,8 +64,8 @@ public:
 		return XMMatrixTranspose(XMMatrixInverse(&det, A));
 	}
 
-	static XMVECTOR RandUnitVec3();
-	static XMVECTOR RandHemisphereUnitVec3(XMVECTOR n);
+	static XMVECTOR RandUnitfloat3();
+	static XMVECTOR RandHemisphereUnitfloat3(XMVECTOR n);
 
 	static const float Infinity;
 	static const float Pi;

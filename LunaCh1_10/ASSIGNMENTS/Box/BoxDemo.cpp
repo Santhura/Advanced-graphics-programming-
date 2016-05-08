@@ -386,12 +386,15 @@ void BoxApp::OnMouseMove(WPARAM btnState, int x, int y)
 	mLastMousePos.x = x;
 	mLastMousePos.y = y;
 }
+
+
 void GenerateCylinderCap(GeometryGenerator::MeshData &meshData, int sliceCount, float radius, float yPos)
 {
 	float theta = 2.0f*XM_PI / sliceCount;
 	for (size_t i = 0; i < sliceCount + 1; i++)
 	{
 		GeometryGenerator::Vertex vertex;
+		//first vertex starts in the middel, and the rest around it.
 		if (i == 0) {
 			vertex.Position = XMFLOAT3(0.0f, yPos, 0.0f);
 		}
@@ -438,14 +441,11 @@ void GenerateCylinder(GeometryGenerator::MeshData &meshData, int sliceCount, flo
 		meshData.Indices.push_back(lastVertex);
 		if (i == sliceCount - 1) {
 			meshData.Indices.push_back(sliceCount + 2);
+			meshData.Indices.push_back(lastVertex - (sliceCount * 2));
+
 		}
 		else {
 			meshData.Indices.push_back(lastVertex + 1);
-		}
-		if (i == sliceCount - 1) {
-			meshData.Indices.push_back(lastVertex - (sliceCount * 2));
-		}
-		else {
 			meshData.Indices.push_back(lastVertex - sliceCount);
 		}
 		lastVertex++;

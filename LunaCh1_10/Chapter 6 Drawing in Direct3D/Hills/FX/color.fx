@@ -5,7 +5,6 @@
 //***************************************************************************************
 
 static float iGlobalTime;
-
 cbuffer cbPerObject
 {
 	float4x4 gWorldViewProj; 
@@ -87,8 +86,7 @@ float4 raymarch(float3 org, float3 dir)
 float4 PS(VertexOut fragCoord) : SV_Target
 {
 	iGlobalTime = sTime;
-	float2 iResolution = float2(800,600);
-
+	float2 iResolution = float2(800, 600);
 	float2 v = -1.0 + 2.0 * fragCoord.PosH / iResolution.xy;
 	v.x *= iResolution.x / iResolution.y;
 
@@ -103,6 +101,7 @@ float4 PS(VertexOut fragCoord) : SV_Target
 	float4 fragColor = lerp(float4(0.,0.,0.,0.), col, pow(glow*2., 4.));
 
 	return fragColor;
+	
 }
 
 technique11 ColorTech
@@ -114,4 +113,3 @@ technique11 ColorTech
         SetPixelShader( CompileShader( ps_5_0, PS() ) );
     }
 }
-

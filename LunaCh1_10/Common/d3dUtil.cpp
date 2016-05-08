@@ -4,7 +4,7 @@
 
 #include "d3dUtil.h"
 
-ID3D11ShaderResourceView* d3dHelper::CreateTexture2DArraySRV(
+ID3D11ShaderResourceView* d3dHelper::Createtex2DArraySRV(
 		ID3D11Device* device, ID3D11DeviceContext* context,
 		std::vector<std::wstring>& filenames,
 		DXGI_FORMAT format,
@@ -77,12 +77,12 @@ ID3D11ShaderResourceView* d3dHelper::CreateTexture2DArraySRV(
 		// for each mipmap level...
 		for(UINT mipLevel = 0; mipLevel < texElementDesc.MipLevels; ++mipLevel)
 		{
-			D3D11_MAPPED_SUBRESOURCE mappedTex2D;
-			HR(context->Map(srcTex[texElement], mipLevel, D3D11_MAP_READ, 0, &mappedTex2D));
+			D3D11_MAPPED_SUBRESOURCE mappedtex2D;
+			HR(context->Map(srcTex[texElement], mipLevel, D3D11_MAP_READ, 0, &mappedtex2D));
 
 			context->UpdateSubresource(texArray, 
 				D3D11CalcSubresource(mipLevel, texElement, texElementDesc.MipLevels),
-				0, mappedTex2D.pData, mappedTex2D.RowPitch, mappedTex2D.DepthPitch);
+				0, mappedtex2D.pData, mappedtex2D.RowPitch, mappedtex2D.DepthPitch);
 
 			context->Unmap(srcTex[texElement], mipLevel);
 		}

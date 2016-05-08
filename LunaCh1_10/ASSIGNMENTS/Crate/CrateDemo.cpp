@@ -480,7 +480,6 @@ void CrateApp::BuildGeometryBuffers()
 			t.x = 0.35f;
 		else if (i == 2 || i == 3)
 			t.x = 0.66f;
-		//t.y = 1;
 
 		vertices3[j].Pos = p;
 		vertices3[j].Normal = phoneScreen.Vertices[i].Normal;

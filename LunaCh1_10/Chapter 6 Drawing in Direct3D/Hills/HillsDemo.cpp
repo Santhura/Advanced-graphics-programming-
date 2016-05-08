@@ -11,7 +11,6 @@
 
 #include "d3dApp.h"
 #include "d3dx11Effect.h"
-#include "MathHelper.h"
 
 struct Vertex
 {
@@ -179,8 +178,6 @@ void ShaderDemo::DrawScene()
 	{
 
 		mTech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
-
-
 		md3dImmediateContext->DrawIndexed(6, 0, 0);
 	}
 

@@ -766,7 +766,7 @@ void BoxApp::DrawScene()
 	}
 
 
-	//Additve triangle blending tothe back buffer
+	//Additve triangle blending to the back buffer
 	md3dImmediateContext->IASetVertexBuffers(0, 1, &mBoxVB3, &stride, &offset);
 	md3dImmediateContext->IASetIndexBuffer(mBoxIB3, DXGI_FORMAT_R32_UINT, 0);
 
@@ -864,7 +864,7 @@ void BoxApp::DrawScene()
 	}
 
 
-	//draw the quadvieuwer back to te buffer
+	//draw the quadvieuwer back to the buffer
 	mTech->GetDesc(&techDesc);
 	for (UINT p = 0; p < techDesc.Passes; ++p)
 	{
